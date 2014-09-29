@@ -1,88 +1,105 @@
 package assignment2;
 
-/**
- * An interface for the Identifier class which will model the identifiers
- * present in the set
- * 
- * @author Tjarco Kerssens
- * @elements Characters
- * @structure Linear
- * @domain All alphanumeric characters, non empty identifiers starting with a
- *         letter
- * @constructor Identifier(char character); <dt><b>PRE-condition</b>
- *              <dd>-
- *              <dt><b>POST-condition</b>
- *              <dd>The Identifier is created and initialized with the first
- *              character
- *              <dt><b>throws</b>
- *              <dd>APException if the character is not alphabetic
- */
 
-public interface IdentifierInterface extends Data {
+public class Identifier implements IdentifierInterface {
+	
+	private char[]characterSet;
+	private int nextIndex;
+	
+	public Identifier(char character) throws APException {
+		init(character);
+	}
 
-	/**
-	 * Initialization of data input
-	 * 
-	 * @throws APException
-	 *             if the character is not a letter
-	 * @precondition -
-	 * @postcondition The identifier is reset to it's default state
-	 * 
-	 */
-	void init(char character) throws APException;
+	@Override
+	public void init(char character) throws APException {
+		characterSet = new char[1];
+		if (isAlhpabetic(character)) {
+			characterSet[0] = character;
+			nextIndex = 1;
+		} else {
+			throw new APException("The first character should be Alphabetic");
+		}
+	}
 
-	/**
-	 * Add a character to the identifier
-	 * 
-	 * @param character
-	 * @throws IllegalFormatException
-	 *             if the character is not alphanumeric
-	 * @postcondition The identifier is put into the Identifier
-	 */
-	void addCharacter(char character) throws APException;
+	@Override
+	public void addCharacter(char character) throws APException {
+		if (isAlpaNumeric(character)) {
+			if (nextIndex == characterSet.length) {
+				char[] temp = characterSet;
+				characterSet = new char[temp.length * 2];
+				for (int i = 0; i < temp.length; i++) {
+					characterSet[i] = temp[i];
+				}
+			}
+			characterSet[nextIndex] = character;
+			nextIndex++;
+		} else {
+			throw new APException("Character '" + character	+ "' is not Alphanummeric");
+		}
+	}
 
-	/**
-	 * Remove a character from the from this Identifier at the specified index
-	 * 
-	 * @param index
-	 * 
-	 * @precondition character array is not null, index is not null
-	 * @postcondition true: The character at the provided index is removed<br>
-	 *                false: there exists no character at the provided array
-	 *                position
-	 */
-	boolean removeCharacter(int index);
+	@Override
+	public boolean removeCharacter(int index) {
+		for (int i = index; i < characterSet.length - 1; i++) {
+			characterSet[i] = characterSet[i + 1];
+		}
+		return true;
+	}
 
-	/**
-	 * Return the character at the provided index position
-	 * 
-	 * @param index
-	 * @return Return the character on that index position
-	 * 
-	 * @precondition Index is a valid array position, array is not null
-	 * @postcondition Character at provided index position is determined and
-	 *                returned
-	 */
-	char getCharacter(int index);
+	@Override
+	public char getCharacter(int index) {
+		return characterSet[index];
+	}
 
-	/**
-	 * Give the amount of characters in the identifier
-	 * 
-	 * @return the amount of characters
-	 * 
-	 * @precondition the identifier is not null
-	 * @postcondition The amount of characters in the identifier is computed and
-	 *                returned as an integer
-	 */
-	int getLenght();
+	@Override
+	public int getLenght() {
+		return characterSet.length;
+	}
 
-	/**
-	 * Return all the characters in the Identifier as an array of chars
-	 * 
-	 * @return an array of chars
-	 * 
-	 * @precondition Array is not null
-	 * @postcondition All characters of the identifier are returned
-	 */
-	char[] getAllCharacters();
+	@Override
+	public char[] getAllCharacters() {
+		return characterSet;
+	}
+
+	private boolean isAlpaNumeric(char character) {
+		return Character.isDigit(character) || Character.isLetter(character);
+	}
+
+	private boolean isAlhpabetic(char character) {
+		return Character.isLetter(character);
+	}
+	
+	public Identifier clone() {
+		
+		Identifier clone = null;
+		
+		try {
+			clone = new Identifier(this.getCharacter(0));
+		} catch (APException e) {}
+		
+		for(int i = 1; i < this.getLenght() -1; i++) {
+			try {
+				clone.addCharacter(this.getCharacter(i));
+			} catch (APException e) {}
+		}
+		return clone;
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		
+		Identifier compare = ((Identifier)o);
+		
+		if (compare.nextIndex != this.nextIndex) {
+			return 1;
+		}
+		
+		for(int i = 0; i < this.nextIndex; i++) {
+			if (!(compare.getCharacter(i) == this.getCharacter(i))) {
+				return compare.getCharacter(i) - this.getCharacter(i);
+			}
+		}
+		return 0;
+	}
+
 }
