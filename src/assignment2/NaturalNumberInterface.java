@@ -33,7 +33,7 @@ public interface NaturalNumberInterface extends Data {
 	 *                return false if the character is not a digit
 	 * 
 	 */
-	boolean init(char digit);
+	boolean init(char digit) throws APException;
 
 	/**
 	 * Adds a new digit to the NaturalNumber
