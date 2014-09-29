@@ -46,21 +46,24 @@ public class SortedList<E extends Data> extends List<E> implements
 	}
 
 	public boolean find(E d) {
-		if (d.compareTo(list.data) == 0) {
+		
+		if (list.data.compareTo(d) == 0) {
 			return true;
-		} else if (d.compareTo(this.list.data) < 0) {
+			
+		} else if (list.data.compareTo(d) < 0) {
+			
 			while (list.next != null) {
-				this.list = this.list.next;
+				list = list.next;
 
-				if (d.compareTo(this.list.data) == 0) {
+				if (list.data.compareTo(d) == 0) {
 					return true;
 				}
 			}
 		} else {
 			while (list.prior != null) {
-				this.list = this.list.prior;
+				list = list.prior;
 
-				if (d.compareTo(this.list.data) == 0) {
+				if (list.data.compareTo(d) == 0) {
 					return true;
 				}
 			}
